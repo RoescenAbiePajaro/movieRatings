@@ -37,7 +37,6 @@
     };
 </script>
 
-
 <footer class="py-20 sm:py-32 bg-black border-t border-solid border-orange-950 flex flex-col gap-6 sm:gap-8 justify-center items-center">
     <div class="flex flex-col items-center gap-6 sm:gap-8 justify-center rounded-lg text-center text-white">
         <h2 class="text-2xl font-bold">Add Your Comment</h2>
@@ -47,13 +46,13 @@
                 bind:value={username} 
                 placeholder="Your Name" 
                 required 
-                class="p-2 rounded"
+                class="p-2 rounded bg-gray-700 text-white placeholder-gray-400"
             />
             <textarea 
                 bind:value={comment} 
                 placeholder="Your Comment" 
                 required 
-                class="p-2 rounded"
+                class="p-2 rounded bg-gray-700 text-white placeholder-gray-400"
             ></textarea>
             <button type="submit" class="bg-orange-600 text-white py-2 px-4 rounded">Submit</button>
         </form>

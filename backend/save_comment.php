@@ -1,6 +1,6 @@
 <?php
 // Database connection
-$conn = new mysqli('localhost', 'root', '', 'comments_db');
+$conn = new mysqli('localhost', 'root', '', 'comment_db');
 
 // Check connection
 if ($conn->connect_error) {
