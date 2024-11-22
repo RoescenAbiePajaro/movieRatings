@@ -3,7 +3,7 @@
     import { onMount, getContext } from 'svelte';
     
     let { id } = getContext('params');
-    let movie = {title:'',name:'', };
+    let movie = {title:'',name:'',image:'', };
     let rating = 0;
 
     // Fetch movie data (GET request)
