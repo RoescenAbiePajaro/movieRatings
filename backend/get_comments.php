@@ -1,24 +1,36 @@
 <?php
-// Database connection
-$conn = new mysqli('localhost', 'root', '', 'comment_db');
+// Enable CORS
+header("Access-Control-Allow-Origin: *");  // Allows requests from any domain
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Credentials: true"); // Allow credentials
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+// If it's an OPTIONS request (preflight), respond with a success status
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    header("HTTP/1.1 200 OK");
+    exit(0);
 }
 
-// Fetch comments
-$sql = "SELECT username, comment, timestamp FROM comments ORDER BY timestamp DESC";
-$result = $conn->query($sql);
+// Connect to your database
+$host = 'localhost'; // Your database host
+$dbname = 'comment_db'; // Your database name
+$username = 'root'; // Your database username
+$password = ''; // Your database password
 
-$comments = [];
-if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-        $comments[] = $row;
-    }
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Query to get all comments
+    $stmt = $pdo->query("SELECT username, comment, timestamp FROM comments ORDER BY timestamp DESC");
+    $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Return comments as JSON
+    echo json_encode($comments);
+
+} catch (PDOException $e) {
+    // Handle database connection errors
+    http_response_code(500);
+    echo json_encode(["error" => "Database connection failed: " . $e->getMessage()]);
 }
-
-echo json_encode($comments);
-
-$conn->close();
 ?>
