@@ -1,20 +1,19 @@
-<!-- moviepage.svelte
 <script>
-    import { onMount, getContext } from 'svelte';
+    import { onMount } from 'svelte';
+    import { page } from '$app/stores'; // Import page store to access the route parameter
 
-    let { id } = getContext('params');
-    let movie = { title: '', name: '', image: '', description: '', };
+    let movie = { id: '', title: '', image: '', description: '' };
     let rating = 0;
 
-    // Fetch movie data (GET request)
+    // Fetch movie data based on the dynamic id from the route
     onMount(async () => {
+        const id = $page.params.id;  // Access the route parameter
         const res = await fetch(`/api/movies/${id}`);
         movie = await res.json();
     });
 
-    // Submit rating (POST request)
     const submitRating = async () => {
-        const res = await fetch(`/api/movies/${id}/rate`, {
+        const res = await fetch(`/api/movies/${movie.id}/rate`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -60,4 +59,4 @@
             </button>
         </div>
     </section>
-</main> -->
+</main>
