@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [sveltekit()],
   build: {
+    outDir: 'public', // Specify the output directory as 'public'
     rollupOptions: {
       input: '**/*.{test,spec}.?(c|m)[jt]s?(x)',
       external: [
