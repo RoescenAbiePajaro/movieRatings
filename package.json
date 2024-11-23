@@ -38,6 +38,7 @@
 	},
 	"dependencies": {
 		"@sveltejs/adapter-static": "^3.0.6",
+		"@sveltejs/adapter-vercel": "^5.4.8",
 		"@tailwindcss/typography": "^0.5.15",
 		"bad-words": "^4.0.0",
 		"svelte-routing": "^2.13.0"
