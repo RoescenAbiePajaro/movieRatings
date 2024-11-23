@@ -1,15 +1,18 @@
 <?php
-// Enable CORS
-header("Access-Control-Allow-Origin: *");  // Allows requests from any domain
+// Enable CORS for all origins
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Credentials: true"); // Allow credentials
+header("Access-Control-Allow-Credentials: true");
 
 // If it's an OPTIONS request (preflight), respond with a success status
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     header("HTTP/1.1 200 OK");
     exit(0);
 }
+
+// Include database connection
+require 'connect.php';
 
 // Check if it's a POST request
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -24,28 +27,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // Connect to your database
-    $host = 'localhost'; // Your database host
-    $dbname = 'comment_db'; // Your database name
-    $username_db = 'root'; // Your database username
-    $password = ''; // Your database password
+    // Insert comment into the database
+    $stmt = $pdo->prepare("INSERT INTO comments (username, comment, timestamp) VALUES (?, ?, ?)");
+    $stmt->execute([$username, $comment, date('Y-m-d H:i:s')]);
 
-    try {
-        $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username_db, $password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        // Insert comment into the database
-        $stmt = $pdo->prepare("INSERT INTO comments (username, comment, timestamp) VALUES (?, ?, ?)");
-        $stmt->execute([$username, $comment, date('Y-m-d H:i:s')]);
-
-        // Respond with success
-        echo json_encode(["success" => "Comment added successfully"]);
-
-    } catch (PDOException $e) {
-        // Handle database connection errors
-        http_response_code(500);
-        echo json_encode(["error" => "Database connection failed: " . $e->getMessage()]);
-    }
+    // Respond with success
+    echo json_encode(["success" => "Comment added successfully"]);
 } else {
     // Handle invalid request method
     http_response_code(405); // Method Not Allowed

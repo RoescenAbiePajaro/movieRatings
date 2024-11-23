@@ -3,65 +3,79 @@
 
     // Define the type of each comment
     interface Comment {
+        id: number;
         username: string;
         comment: string;
-        timestamp: string; // Keep it as a string, or convert it into Date if needed
+        timestamp: string;
     }
 
-    // Define comments as an array of Comment objects
     let comments: Comment[] = [];
     let username = '';
     let comment = '';
     let errorMessage = '';
     let successMessage = '';
+    let isLoading = false;
 
     // Fetch comments from the backend
     onMount(async () => {
+        isLoading = true;
         try {
-            const res = await fetch('http://localhost/movie_ratings/get_comments.php');
+            const res = await fetch('http://localhost:8080/movieRatings/get_comments.php');
             if (!res.ok) {
                 throw new Error('Failed to fetch comments');
             }
             comments = await res.json();
+            console.log('Comments fetched successfully:', comments);
         } catch (error: unknown) {
             if (error instanceof Error) {
                 errorMessage = error.message;
+                console.error('Error fetching comments:', error);
             } else {
                 errorMessage = 'An unknown error occurred';
+                console.error('Unknown error fetching comments');
             }
+        } finally {
+            isLoading = false;
         }
     });
 
     // Submit comment
     const submitComment = async () => {
+        isLoading = true;
         try {
-            const response = await fetch('http://localhost/movie_ratings/save_comment.php', {
+            const response = await fetch('http://localhost:8080/movieRatings/save_comment.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `username=${encodeURIComponent(username)}&comment=${encodeURIComponent(comment)}`,
             });
 
             if (!response.ok) {
-                throw new Error('Failed to submit comment');
+                const errorText = await response.text();
+                throw new Error(`Failed to submit comment: ${response.status} ${errorText}`);
             }
 
             // Clear input fields
             username = '';
             comment = '';
             successMessage = 'Comment submitted successfully!';
-
+            
             // Re-fetch the comments
-            const newComments = await fetch('http://localhost/movie_ratings/get_comments.php');
+            const newComments = await fetch('http://localhost:8080/movieRatings/get_comments.php');
             if (!newComments.ok) {
-                throw new Error('Failed to fetch updated comments');
+                const errorText = await newComments.text();
+                throw new Error(`Failed to fetch updated comments: ${newComments.status} ${errorText}`);
             }
             comments = await newComments.json();
         } catch (error: unknown) {
             if (error instanceof Error) {
                 errorMessage = error.message;
+                console.error('Error submitting comment:', error);
             } else {
                 errorMessage = 'An unknown error occurred';
+                console.error('Unknown error submitting comment');
             }
+        } finally {
+            isLoading = false;
         }
     };
 </script>
@@ -99,13 +113,19 @@
                 required 
                 class="p-2 rounded bg-gray-700 text-white placeholder-gray-400"
             ></textarea>
-            <button type="submit" class="bg-orange-600 text-white py-2 px-4 rounded">Submit</button>
+            <button type="submit" class="bg-orange-600 text-white py-2 px-4 rounded">
+                {#if isLoading} 
+                    Submitting... 
+                {:else} 
+                    Submit 
+                {/if}
+            </button>
         </form>
 
         <!-- Display comments -->
         <div class="mt-6 w-full max-w-2xl">
             <h3 class="text-xl font-bold text-gray-200 mb-4">Comments</h3>
-            {#each comments as { username, comment, timestamp }}
+            {#each comments as { id, username, comment, timestamp }}
                 <div class="bg-gray-800 text-white p-4 rounded mb-4">
                     <p class="font-semibold">{username}</p>
                     <p>{comment}</p>
