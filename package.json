@@ -6,7 +6,7 @@
 		"dev": "concurrently \"npm run dev:api\" \"npm run dev:frontend\"",
 		"dev:api": "node api/server.js",
 		"dev:frontend": "vite",
-		"build": "vite build / build --output public",
+		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
