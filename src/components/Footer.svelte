@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import {Filter} from 'bad-words'; // Import the bad-words library
 
     interface Comment {
         id: number;
@@ -9,6 +10,9 @@
         reply_id: number;
     }
 
+    // Initialize the bad-words filter
+    const filter = new Filter();
+
     let comments: Comment[] = [];
     let username = '';
     let comment = '';
@@ -16,6 +20,11 @@
     let errorMessage = '';
     let successMessage = '';
     let isLoading = false;
+
+    // Function to check if a comment contains any bad words
+    const containsBadWords = (text: string) => {
+        return filter.isProfane(text); // Returns true if the text contains bad words
+    };
 
     // Fetch comments on component mount
     onMount(async () => {
@@ -48,10 +57,17 @@
     const submitComment = async () => {
         isLoading = true;
         try {
+            // Check for profanity in the comment using the bad-words library
+            if (containsBadWords(comment)) {
+                errorMessage = 'Your comment contains inappropriate language. Please modify it.';
+                isLoading = false;
+                return; // Stop further execution if bad words are found
+            }
+
             const newComment: Comment = {
                 id: comments.length + 1,
-                username,
-                comment,
+                username: username || 'Anonymous',  // Use 'Anonymous' if username is empty
+                comment: comment,
                 timestamp: new Date().toISOString(),
                 reply_id: replyId
             };
@@ -106,9 +122,9 @@
     };
 </script>
 
-<footer class="py-20 sm:py-32 bg-black border-t border-solid border-orange-950 flex flex-col gap-6 sm:gap-8 justify-center items-center">
+<footer class="py-20 sm:py-32 bg-gray-900 border-t border-solid border-orange-950 flex flex-col gap-6 sm:gap-8 justify-center items-center">
     <div class="flex flex-col items-center gap-6 sm:gap-8 text-center text-white">
-        <h2 class="text-2xl font-bold">Add Your Comment</h2>
+        <h2 class="text-2xl font-bold">Join the Discussion</h2>
 
         {#if errorMessage}
             <div class="text-red-500">{errorMessage}</div>
@@ -119,7 +135,7 @@
         {/if}
 
         <form on:submit|preventDefault={submitComment} class="flex flex-col gap-4 w-full max-w-md">
-            <input type="text" bind:value={username} placeholder="Your Name" required class="p-2 rounded bg-gray-700 text-white placeholder-gray-400" />
+            <input type="text" bind:value={username} placeholder="Your Name (Optional)" class="p-2 rounded bg-gray-700 text-white placeholder-gray-400" />
             <textarea bind:value={comment} placeholder="Your Comment" required class="p-2 rounded bg-gray-700 text-white placeholder-gray-400"></textarea>
             <button type="submit" class="bg-orange-600 text-white py-2 px-4 rounded">
                 {#if isLoading} Submitting... {:else} Submit {/if}
