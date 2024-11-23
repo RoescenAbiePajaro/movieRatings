@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import {Filter} from 'bad-words'; // Import the bad-words library
+    import { Filter } from 'bad-words'; // Import the bad-words library
 
     interface Comment {
         id: number;
@@ -20,10 +20,26 @@
     let errorMessage = '';
     let successMessage = '';
     let isLoading = false;
+    let showRecentComments = false; // State to track if we should show recent comments
 
     // Function to check if a comment contains any bad words
     const containsBadWords = (text: string) => {
         return filter.isProfane(text); // Returns true if the text contains bad words
+    };
+
+    // Function to toggle recent comments
+    const toggleRecentComments = () => {
+        showRecentComments = !showRecentComments;
+    };
+
+    // Function to get filtered comments
+    const filteredComments = () => {
+        if (showRecentComments) {
+            // Assuming "new" means comments from the last 24 hours
+            const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+            return comments.filter(comment => new Date(comment.timestamp) > oneDayAgo);
+        }
+        return comments;
     };
 
     // Fetch comments on component mount
@@ -122,9 +138,84 @@
     };
 </script>
 
-<footer class="py-20 sm:py-32 bg-gray-900 border-t border-solid border-orange-950 flex flex-col gap-6 sm:gap-8 justify-center items-center">
-    <div class="flex flex-col items-center gap-6 sm:gap-8 text-center text-white">
+<style>
+    footer {
+        background-color: #000; /* Black background */
+        color: #fff; /* White text */
+        border-top: 1px solid #333; /* Subtle dark border */
+    }
+
+    form input,
+    form textarea {
+        background-color: #333; /* Dark background for inputs */
+        color: #fff; /* White text */
+        border: 1px solid #444; /* Slightly lighter border */
+        padding: 8px;
+        border-radius: 8px;
+    }
+
+    button {
+        background-color: #1877f2; /* Facebook blue */
+        color: white;
+        padding: 10px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        border: none;
+        font-weight: bold;
+    }
+
+    button:hover {
+        background-color: #145db4;
+    }
+
+    .comments {
+        background-color: #222; /* Dark comment background */
+        padding: 16px;
+        border-radius: 8px;
+        margin-top: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Darker shadow */
+    }
+
+    .comment {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .comment-avatar {
+        width: 40px;
+        height: 40px;
+        background-color: #555; /* Dark gray avatar */
+        border-radius: 50%;
+    }
+
+    .comment-body {
+        flex-grow: 1;
+    }
+
+    .comment-meta {
+        font-size: 12px;
+        color: #bbb; /* Light gray text for timestamps */
+    }
+
+    .reply-btn {
+        color: #1877f2; /* Facebook blue for reply button */
+        cursor: pointer;
+    }
+
+    .reply-btn:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<footer class="py-20 sm:py-32 bg-black border-t border-solid border-gray-800 flex flex-col gap-6 sm:gap-8 justify-center items-center">
+    <div class="flex flex-col items-center gap-6 sm:gap-8 text-center text-white w-full">
         <h2 class="text-2xl font-bold">Join the Discussion</h2>
+
+        <!-- Button to toggle recent comments -->
+        <button on:click={toggleRecentComments} class="bg-gray-700 text-white p-2 rounded">
+            {showRecentComments ? 'Show All Comments' : 'Show Recent Comments'}
+        </button>
 
         {#if errorMessage}
             <div class="text-red-500">{errorMessage}</div>
@@ -134,24 +225,30 @@
             <div class="text-green-500">{successMessage}</div>
         {/if}
 
-        <form on:submit|preventDefault={submitComment} class="flex flex-col gap-4 w-full max-w-md">
-            <input type="text" bind:value={username} placeholder="Your Name (Optional)" class="p-2 rounded bg-gray-700 text-white placeholder-gray-400" />
-            <textarea bind:value={comment} placeholder="Your Comment" required class="p-2 rounded bg-gray-700 text-white placeholder-gray-400"></textarea>
-            <button type="submit" class="bg-orange-600 text-white py-2 px-4 rounded">
-                {#if isLoading} Submitting... {:else} Submit {/if}
+        <form on:submit|preventDefault={submitComment} class="flex flex-col gap-4 w-full max-w-md bg-gray-800 p-4 rounded shadow-md">
+            <input type="text" bind:value={username} placeholder="Your Name (Optional)" class="p-2 rounded bg-gray-700 text-white placeholder-gray-400 w-full text-left" />
+            <textarea bind:value={comment} placeholder="Write a comment..." required class="p-2 rounded bg-gray-700 text-white placeholder-gray-400 w-full h-32 text-left"></textarea>
+            <button type="submit">
+                {#if isLoading} Submitting... {:else} Post {/if}
             </button>
         </form>
 
-        <div class="mt-6 w-full max-w-2xl">
-            <h3 class="text-xl font-bold text-gray-200 mb-4">Comments</h3>
-            {#each comments as { id, username, comment, timestamp }}
-                <div class="bg-gray-800 text-white p-4 rounded mb-4">
-                    <p class="font-semibold">{username}</p>
-                    <p>{comment}</p>
-                    <p class="text-sm text-gray-400">{new Date(timestamp).toLocaleString()}</p>
-                    <button class="text-orange-500 text-sm mt-2" on:click={() => replyToComment(id, username)}>
-                        Reply
-                    </button>
+        <div class="mt-6 w-full max-w-3xl">
+            <h3 class="text-xl font-semibold text-gray-200 mb-4">Comments</h3>
+            {#each filteredComments() as { id, username, comment, timestamp }}
+                <div class="bg-gray-800 text-white p-4 rounded shadow-md mb-4">
+                    <div class="flex items-start gap-4">
+                        <!-- Avatar placeholder -->
+                        <div class="w-10 h-10 rounded-full bg-gray-600"></div>
+                        <div class="flex-1">
+                            <p class="font-semibold">{username}</p>
+                            <p class="text-sm">{comment}</p>
+                            <p class="text-xs text-gray-400 mt-1">{new Date(timestamp).toLocaleString()}</p>
+                        </div>
+                    </div>
+                    <div class="mt-2 flex gap-4 text-sm text-white">
+                        <button class="reply-btn text-white" on:click={() => replyToComment(id, username)}>Reply</button>
+                    </div>
                 </div>
             {/each}
         </div>
