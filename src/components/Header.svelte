@@ -9,7 +9,7 @@
     <!-- Logo TV -->
     <div class="flex items-center">
         <img 
-            src="/assets/images/tv-app.png" 
+            src="assets/images/tvapp.png" 
             alt="TV Logo" 
             class="h-8 w-8 mr-3"
         />
