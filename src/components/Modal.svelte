@@ -1,4 +1,6 @@
+<!--  -->
 <script lang="ts">
+  import { onMount } from 'svelte';
   export let movie: { 
     title: string; 
     image: string; 
@@ -14,7 +16,7 @@
   // Fetch existing comments for the movie
   const fetchComments = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/get.php?movie_title=${encodeURIComponent(movie.title)}`);
+      const response = await fetch(`http://localhost:8080/api/get.php?movie_title=${(movie.title)}`);
       const data = await response.json();
       if (Array.isArray(data)) {
         comments = data.map((item: any) => ({ text: item.comment }));
@@ -38,27 +40,37 @@
     errorMessage = "";
 
     try {
-      const response = await fetch('http://localhost:8080/post.php', {
+      const response = await fetch('http://localhost:8080/api/post.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ movie_title: movie.title, comment })
       });
       const data = await response.json();
+
       if (data.success) {
         comments = [...comments, { text: comment }];
         comment = ""; // Clear the input field
+        // Re-fetch comments after posting
+        fetchComments();
       } else {
         errorMessage = data.error || "Something went wrong.";
       }
-    } catch (error) {
-      errorMessage = "Failed to post comment: " + error.message;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        errorMessage = "Failed to post comment: " + error.message;
+      } else {
+        errorMessage = "Failed to post comment: An unknown error occurred";
+      }
     }
   };
 
   // Fetch comments when the modal is opened
-  fetchComments();
+  onMount(() => {
+    fetchComments();
+  });
 </script>
 
+<!-- Modal Structure -->
 <div class="modal-backdrop" on:click={onClose}>
   <div class="modal-content" on:click|stopPropagation>
     <button class="close-button" on:click={onClose}>×</button>
@@ -89,6 +101,7 @@
   </div>
 </div>
 
+<!-- Styles -->
 <style>
   .modal-backdrop {
     position: fixed;
@@ -160,6 +173,11 @@
     margin-bottom: 10px;
     resize: vertical;
     min-height: 100px;
+    background-color: #fff; /* Ensure background is light */
+  }
+
+  .comment-input::placeholder {
+    color: #888; /* Light gray placeholder for contrast */
   }
 
   .comment-button {
@@ -179,7 +197,8 @@
   }
 
   .comment {
-    background-color: #f1f1f1;
+    background-color: #f0f0f0; /* Light gray background */
+    color: black; /* Black text */
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 4px;
@@ -190,9 +209,5 @@
     color: red;
     margin-top: 10px;
     font-size: 14px;
-  }
-
-  .comment-input::placeholder {
-    color: #ccc;
   }
 </style>
