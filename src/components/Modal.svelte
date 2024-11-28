@@ -71,7 +71,7 @@
 </script>
 
 <!-- Modal Structure -->
-<div class="modal-backdrop" on:click={onClose}>
+<class class="modal-backdrop" on:click={onClose}>
   <div class="modal-content" on:click|stopPropagation>
     <button class="close-button" on:click={onClose}>×</button>
     <h2 class="movie-title">{movie.title}</h2>
@@ -99,7 +99,7 @@
       </div>
     </section>
   </div>
-</div>
+</class>
 <!-- Styles -->
 <style>
   /* Modal Backdrop */
