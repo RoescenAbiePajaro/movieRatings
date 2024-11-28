@@ -93,16 +93,16 @@
       {/if}
 
       <div class="comments">
-        {#each comments as comment, i}
+        {#each comments as comment, i (comment.text)}
           <div class="comment" key={i}>{comment.text}</div>
         {/each}
       </div>
     </section>
   </div>
 </div>
-
 <!-- Styles -->
 <style>
+  /* Modal Backdrop */
   .modal-backdrop {
     position: fixed;
     top: 0;
@@ -116,6 +116,7 @@
     z-index: 10;
   }
 
+  /* Modal Content */
   .modal-content {
     background: #fff;
     padding: 20px;
@@ -128,6 +129,7 @@
     position: relative;
   }
 
+  /* Close Button */
   .close-button {
     position: absolute;
     top: 10px;
@@ -138,22 +140,26 @@
     cursor: pointer;
   }
 
+  /* Movie Title */
   .movie-title {
     font-size: 24px;
     margin-bottom: 10px;
   }
 
+  /* Movie Image */
   .movie-image {
     width: 100%;
     border-radius: 8px;
     margin-bottom: 10px;
   }
 
+  /* Movie Rating */
   .movie-rating {
     font-size: 18px;
     margin-bottom: 10px;
   }
 
+  /* Movie Link */
   .movie-link {
     color: #007bff;
     text-decoration: underline;
@@ -161,10 +167,12 @@
     display: inline-block;
   }
 
+  /* Discussion Section */
   .discussion {
     margin-top: 20px;
   }
 
+  /* Comment Input */
   .comment-input {
     width: 100%;
     padding: 10px;
@@ -174,14 +182,22 @@
     resize: vertical;
     min-height: 100px;
     background-color: #fff; /* Ensure background is light */
+    font-size: 14px;
   }
 
-  .comment-input::placeholder {
-    color: #888; /* Light gray placeholder for contrast */
-  }
+  .comment-input {
+  color: black; /* Text color */
+  background-color: transparent; /* Optional: if you want transparent background */
+}
 
+.comment-input::placeholder {
+  color: white; /* Placeholder text color */
+}
+
+
+  /* Comment Button */
   .comment-button {
-    background-color: #007bff;
+    background-color: #f81e1e;
     color: white;
     border: none;
     padding: 10px;
@@ -190,12 +206,14 @@
     margin-top: 10px;
   }
 
+  /* Comments Section */
   .comments {
     margin-top: 20px;
     max-height: 300px;
     overflow-y: auto;
   }
 
+  /* Individual Comment */
   .comment {
     background-color: #f0f0f0; /* Light gray background */
     color: black; /* Black text */
@@ -205,9 +223,11 @@
     font-size: 14px;
   }
 
+  /* Error Message */
   .error-message {
     color: red;
     margin-top: 10px;
     font-size: 14px;
   }
 </style>
+
