@@ -10,12 +10,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 include 'connect.php'; // Include the database connection
 
-// Fetch all top-level comments (where reply_id is 0)
-$query = "SELECT * FROM comments WHERE reply_id = 0 ORDER BY timestamp DESC";
-$stmt = $conn->prepare($query);
-$stmt->execute();
+// Get movie_title from the query string
+$movie_title = isset($_GET['movie_title']) ? $_GET['movie_title'] : '';
 
-// Fetch the results and encode them in JSON format
-$comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-echo json_encode($comments);
+if (empty($movie_title)) {
+    echo json_encode(['error' => 'Movie title is required']);
+    exit();
+}
+
+try {
+    // Fetch comments for the specific movie
+    $query = "SELECT * FROM movie_comments WHERE movie_title = :movie_title ORDER BY created_at DESC";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':movie_title', $movie_title);
+    $stmt->execute();
+
+    // Fetch the results and encode them in JSON format
+    $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    echo json_encode($comments);
+
+} catch (PDOException $e) {
+    // Catch any database-related errors
+    echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+}
 ?>

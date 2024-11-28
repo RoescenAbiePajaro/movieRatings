@@ -2,9 +2,10 @@
 $servername = "localhost";
 $username = "root"; // XAMPP default username
 $password = ""; // XAMPP default password is empty
-$dbname = "comments_db"; // Your database name
+$dbname = "movie_reviews"; // New database name
 
 try {
+    // Establish the PDO connection to the new database
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     // Set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
