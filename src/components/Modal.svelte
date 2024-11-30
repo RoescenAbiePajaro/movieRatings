@@ -71,12 +71,15 @@
 </script>
 
 <!-- Modal Structure -->
+
+
 <class class="modal-backdrop" on:click={onClose} on:keydown={onClose} role="dialog" tabindex="0">
   <div class="modal-content" on:click|stopPropagation role="document">
     <button class="close-button" on:click={onClose}>×</button>
     <h2 class="movie-title">{movie.title}</h2>
     <img src={movie.image} alt={movie.title} class="movie-image" />
     <p class="movie-rating">Rating: {movie.rating}</p>
+
     <a href={movie.imdbLink} target="_blank" rel="noopener noreferrer" class="movie-link">View on IMDb</a>
 
     <section class="discussion">
@@ -99,6 +102,7 @@
       </div>
     </section>
   </div>
+
 </class>
 <!-- Styles -->
 <style>
