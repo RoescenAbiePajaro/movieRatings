@@ -1,4 +1,5 @@
 name: Build SvelteKit App
+
 on:
   push:
     branches: ["main"]
@@ -12,15 +13,7 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -43,4 +36,8 @@ jobs:
         with:
           path: 'build/'
 
+      - name: Deploy to GitHub Pages
       
+        uses: actions/deploy-pages@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
