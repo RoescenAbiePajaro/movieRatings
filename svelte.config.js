@@ -20,7 +20,11 @@ const config = {
   kit: {
     // Other configurations
     adapter: adapter(),
+     pages: 'build',
+      assets: 'build'
   },
 };
 
 export default config;
+
+
