@@ -14,7 +14,7 @@
             class="h-8 w-8 mr-3"
         />
         <h1 class="font-medium">
-            <b class="font-bold poppins">Svelte</b> <span class="font-bold poppins">Movie Ratings</span>
+            <b class="font-bold poppins">Svelte</b> <span class="font-bold poppins">Screen</span>
         </h1>
     </div>
 </header>

@@ -71,16 +71,13 @@
 </script>
 
 <!-- Modal Structure -->
-
-
-<class class="modal-backdrop" on:click={onClose} on:keydown={onClose} role="dialog" tabindex="0">
-  <div class="modal-content" on:click|stopPropagation role="document">
+<class class="modal-backdrop" on:click={onClose}>
+  <div class="modal-content" on:click|stopPropagation>
     <button class="close-button" on:click={onClose}>×</button>
     <h2 class="movie-title">{movie.title}</h2>
     <img src={movie.image} alt={movie.title} class="movie-image" />
     <p class="movie-rating">Rating: {movie.rating}</p>
-
-    <a href={movie.imdbLink} target="_blank" rel="noopener noreferrer" class="movie-link">View on IMDb</a>
+    <a href={movie.imdbLink} target="_blank" class="movie-link">View on IMDb</a>
 
     <section class="discussion">
       <h3>Discussion</h3>
@@ -97,13 +94,12 @@
 
       <div class="comments">
         {#each comments as comment, i (comment.text)}
-          <div class="comment">{comment.text}</div>
+          <div class="comment" key={i}>{comment.text}</div>
         {/each}
       </div>
     </section>
   </div>
 </class>
-
 <!-- Styles -->
 <style>
   /* Modal Backdrop */
@@ -234,4 +230,3 @@
     font-size: 14px;
   }
 </style>
-
