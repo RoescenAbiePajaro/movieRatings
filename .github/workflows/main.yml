@@ -1,5 +1,4 @@
 name: Build SvelteKit App
-
 on:
   push:
     branches: ["main"]

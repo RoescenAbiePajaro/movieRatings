@@ -78,11 +78,15 @@
     <!-- Movie Grid -->
     <div class="movie-grid">
       {#each filteredMovies as movie}
-        <div class="movie-card" on:click={() => openModal(movie)}>
+        <button
+          class="movie-card"
+          on:click={() => openModal(movie)}
+          on:keydown={(e) => e.key === 'Enter' && openModal(movie)}
+        >
           <img src={movie.image} alt={movie.title} />
           <h3>{movie.title}</h3>
           <p>{movie.rating}</p>
-        </div>
+        </button>
       {/each}
     </div>
   </section>
@@ -91,6 +95,7 @@
     <Modal movie={selectedMovie} onClose={closeModal} />
   {/if}
 </main>
+
 
 <style>
   /* Main section styles */
