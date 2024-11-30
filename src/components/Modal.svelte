@@ -73,8 +73,8 @@
 <!-- Modal Structure -->
 
 
-<div class="modal-backdrop" on:click={onClose} on:keydown={(e) => e.key === 'Escape' && onClose()} role="dialog">
-  <div class="modal-content" on:click|stopPropagation>
+<class class="modal-backdrop" on:click={onClose} on:keydown={onClose} role="dialog" tabindex="0">
+  <div class="modal-content" on:click|stopPropagation role="document">
     <button class="close-button" on:click={onClose}>×</button>
     <h2 class="movie-title">{movie.title}</h2>
     <img src={movie.image} alt={movie.title} class="movie-image" />
@@ -92,7 +92,7 @@
       <button on:click={addComment} class="comment-button">Post Comment</button>
 
       {#if errorMessage}
-        <p class="error-message">{errorMessage}</p>
+        <p class="error-message">{errorMessage}</p> <!-- Display error message -->
       {/if}
 
       <div class="comments">
@@ -102,7 +102,8 @@
       </div>
     </section>
   </div>
-</div>
+</class>
+
 <!-- Styles -->
 <style>
   /* Modal Backdrop */
