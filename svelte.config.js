@@ -14,17 +14,10 @@
 // export default config;
 
 import adapter from '@sveltejs/adapter-vercel';
-
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   kit: {
-    // Other configurations
     adapter: adapter(),
-     pages: 'build',
-      assets: 'build'
   },
 };
-
 export default config;
-
-
