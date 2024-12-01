@@ -62,10 +62,9 @@
     movie.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 </script>
-
 <main>
   <section class="movies-section">
-    <h1>RECCOMENDATION FOR YOU</h1>
+    <h1>RECOMMENDATION FOR YOU</h1>
 
     <!-- Search bar -->
     <input 
