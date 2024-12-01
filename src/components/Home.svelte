@@ -65,7 +65,7 @@
 
 <main>
   <section class="movies-section">
-    <h1>SMR RECCOMENDATION FOR YOU</h1>
+    <h1>RECCOMENDATION FOR YOU</h1>
 
     <!-- Search bar -->
     <input 

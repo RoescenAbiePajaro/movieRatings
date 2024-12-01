@@ -1,10 +1,8 @@
-
-
 <?php
-$servername = "sql304.infinityfree.com";
-$username = "	if0_37824771"; // Default XAMPP username
-$password = "yeboi222GB"; // Default XAMPP password is empty
-$dbname = "if0_37824771_movie_reviews"; // Database name
+$servername = "localhost";
+$username = "root"; // Default XAMPP username
+$password = ""; // Default XAMPP password is empty
+$dbname = "movie_reviews"; // Database name
 
 try {
     // Establish PDO connection
@@ -15,4 +13,3 @@ try {
     exit();
 }
 ?>
-
