@@ -16,7 +16,7 @@
   // Fetch existing comments for the movie
   const fetchComments = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/get.ts?movie_title=${(movie.title)}`);
+      const response = await fetch(`http://localhost:8080/api/get.php?movie_title=${(movie.title)}`);
       const data = await response.json();
       if (Array.isArray(data)) {
         comments = data.map((item: any) => ({ text: item.comment }));
@@ -40,7 +40,7 @@
     errorMessage = "";
 
     try {
-      const response = await fetch('http://localhost:8080/api/post.ts', {
+      const response = await fetch('http://localhost:8080/api/post.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ movie_title: movie.title, comment })
