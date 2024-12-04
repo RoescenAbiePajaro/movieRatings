@@ -3,7 +3,8 @@
   import { onMount } from 'svelte';
   export let movie: { 
     title: string; 
-    image: string; 
+    image: string;
+    description: string;
     rating: string; 
     imdbLink: string; 
   };
