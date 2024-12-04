@@ -11,7 +11,7 @@
 
 <style>
   footer {
-    background: linear-gradient(135deg, #1a1a1a, #333);
+    background: none; /* Removes the gray background */
     color: #fff;
     padding: 20px;
     text-align: center;
