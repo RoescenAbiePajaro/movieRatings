@@ -46,10 +46,10 @@
       imdbLink: "https://www.imdb.com/title/tt8228288//",
     },
     {
-      title: "The Platform",
-      rating: "8.5",
-      image: "assets/images/theplatform.jpg",
-      imdbLink: "https://www.imdb.com/title/tt7888964/",
+      title: "La La Land",
+      rating: "8.0",
+      image: "assets/images/lalaland.jpg",
+      imdbLink: "https://www.imdb.com/title/tt3783958/",
     },
   ];
 
