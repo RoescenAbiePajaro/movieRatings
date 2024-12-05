@@ -1,10 +1,10 @@
-<!-- Modal.svelte -->
 <script lang="ts">
   import { onMount } from 'svelte';
+
   export let movie: { 
     title: string; 
-    image: string;
-    description: string;
+    image: string; 
+    description: string; 
     rating: string; 
     imdbLink: string; 
   };
@@ -17,7 +17,7 @@
   // Fetch existing comments for the movie
   const fetchComments = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/get.php?movie_title=${(movie.title)}`);
+      const response = await fetch(`http://localhost:8080/api/get.php?movie_title=${encodeURIComponent(movie.title)}`);
       const data = await response.json();
       if (Array.isArray(data)) {
         comments = data.map((item: any) => ({ text: item.comment }));
@@ -37,8 +37,7 @@
       return;
     }
 
-    // Reset error message before posting the comment
-    errorMessage = "";
+    errorMessage = ""; // Reset error message
 
     try {
       const response = await fetch('http://localhost:8080/api/post.php', {
@@ -51,35 +50,34 @@
       if (data.success) {
         comments = [...comments, { text: comment }];
         comment = ""; // Clear the input field
-        // Re-fetch comments after posting
-        fetchComments();
+        await fetchComments(); // Re-fetch comments
       } else {
         errorMessage = data.error || "Something went wrong.";
       }
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        errorMessage = "Failed to post comment: " + error.message;
-      } else {
-        errorMessage = "Failed to post comment: An unknown error occurred";
-      }
+      errorMessage = "Failed to post comment: " + (error instanceof Error ? error.message : "An unknown error occurred");
     }
   };
 
-  // Fetch comments when the modal is opened
+  // Fetch comments when the modal is mounted
   onMount(() => {
     fetchComments();
   });
 </script>
 
-<!-- Modal Structure -->
-<class class="modal-backdrop" on:click={onClose}>
+<div class="modal-backdrop" on:click={onClose}>
   <div class="modal-content" on:click|stopPropagation>
+    <!-- Close Button -->
     <button class="close-button" on:click={onClose}>×</button>
+
+    <!-- Movie Details -->
     <h2 class="movie-title">{movie.title}</h2>
     <img src={movie.image} alt={movie.title} class="movie-image" />
+    <p class="movie-description">{movie.description}</p>
     <p class="movie-rating">Rating: {movie.rating}</p>
     <a href={movie.imdbLink} target="_blank" class="movie-link">View on IMDb</a>
 
+    <!-- Discussion Section -->
     <section class="discussion">
       <h3>Discussion</h3>
       <textarea
@@ -90,7 +88,7 @@
       <button on:click={addComment} class="comment-button">Post Comment</button>
 
       {#if errorMessage}
-        <p class="error-message">{errorMessage}</p> <!-- Display error message -->
+        <p class="error-message">{errorMessage}</p>
       {/if}
 
       <div class="comments">
@@ -100,8 +98,8 @@
       </div>
     </section>
   </div>
-</class>
-<!-- Styles -->
+</div>
+
 <style>
   /* Modal Backdrop */
   .modal-backdrop {
@@ -141,6 +139,10 @@
     cursor: pointer;
   }
 
+  .close-button:hover {
+    color: red;
+  }
+
   /* Movie Title */
   .movie-title {
     font-size: 24px;
@@ -151,6 +153,12 @@
   .movie-image {
     width: 100%;
     border-radius: 8px;
+    margin-bottom: 10px;
+  }
+
+  /* Movie Description */
+  .movie-description {
+    font-size: 16px;
     margin-bottom: 10px;
   }
 
@@ -182,19 +190,9 @@
     margin-bottom: 10px;
     resize: vertical;
     min-height: 100px;
-    background-color: #fff; /* Ensure background is light */
+    background-color: #fff;
     font-size: 14px;
   }
-
-  .comment-input {
-  color: black; /* Text color */
-  background-color: transparent; /* Optional: if you want transparent background */
-}
-
-.comment-input::placeholder {
-  color: white; /* Placeholder text color */
-}
-
 
   /* Comment Button */
   .comment-button {
@@ -216,8 +214,8 @@
 
   /* Individual Comment */
   .comment {
-    background-color: #f0f0f0; /* Light gray background */
-    color: black; /* Black text */
+    background-color: #f0f0f0;
+    color: black;
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 4px;
