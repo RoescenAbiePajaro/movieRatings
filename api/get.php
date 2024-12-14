@@ -1,3 +1,4 @@
+<!-- get.php -->
 <?php
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
@@ -12,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 include 'connect.php';
 include 'encrypt_decrypt.php'; // Include encryption/decryption functions
 
-$key = 'your-secure-encryption-key'; // Replace with a secure key
+$key = getenv('ENCRYPTION_KEY') ?: 'default_secure_key';
 
 $movie_title = isset($_GET['movie_title']) ? htmlspecialchars(trim($_GET['movie_title']), ENT_QUOTES, 'UTF-8') : '';
 
