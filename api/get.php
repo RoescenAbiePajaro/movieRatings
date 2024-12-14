@@ -1,4 +1,3 @@
-<!-- get.php -->
 <?php
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
@@ -11,9 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 include 'connect.php';
-include 'encrypt_decrypt.php'; // Include encryption/decryption functions
-
-$key = getenv('ENCRYPTION_KEY') ?: 'default_secure_key';
+include 'encrypt_decrypt.php'; // Include encryption functions
 
 $movie_title = isset($_GET['movie_title']) ? htmlspecialchars(trim($_GET['movie_title']), ENT_QUOTES, 'UTF-8') : '';
 
@@ -25,14 +22,17 @@ if (empty($movie_title)) {
 try {
     $query = "SELECT comment, created_at FROM movie_comments WHERE movie_title = :movie_title ORDER BY created_at DESC";
     $stmt = $conn->prepare($query);
-    $stmt->bindParam(':movie_title', encryptData($movie_title, $key), PDO::PARAM_STR); // Encrypt search term
+    $stmt->bindParam(':movie_title', $movie_title, PDO::PARAM_STR);
     $stmt->execute();
     $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Decrypt the retrieved comments
+    $key = getenv('ENCRYPTION_KEY'); // Get the encryption key
+
+    // Decrypt comments
     foreach ($comments as &$comment) {
         $comment['comment'] = decryptData($comment['comment'], $key);
     }
+    unset($comment);
 
     echo json_encode($comments);
 } catch (PDOException $e) {

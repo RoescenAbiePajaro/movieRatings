@@ -1,4 +1,3 @@
-<!-- post.php -->
 <?php
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
@@ -11,9 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 include 'connect.php';
-include 'encrypt_decrypt.php'; // Include encryption/decryption functions
-
-$key = getenv('ENCRYPTION_KEY') ?: 'default_secure_key';
+include 'encrypt_decrypt.php'; // Include encryption functions
 
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
@@ -32,12 +29,12 @@ if (empty($movie_title) || empty($comment)) {
 }
 
 try {
-    $encrypted_title = encryptData($movie_title, $key);
+    $key = getenv('ENCRYPTION_KEY'); // Get the encryption key
     $encrypted_comment = encryptData($comment, $key);
 
     $query = "INSERT INTO movie_comments (movie_title, comment) VALUES (:movie_title, :comment)";
     $stmt = $conn->prepare($query);
-    $stmt->bindParam(':movie_title', $encrypted_title, PDO::PARAM_STR);
+    $stmt->bindParam(':movie_title', $movie_title, PDO::PARAM_STR);
     $stmt->bindParam(':comment', $encrypted_comment, PDO::PARAM_STR);
 
     if ($stmt->execute()) {

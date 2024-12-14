@@ -1,3 +1,4 @@
+<!-- Modal.svelte -->
 <script lang="ts">
   import { onMount } from 'svelte';
   export let movie: { 
@@ -13,48 +14,13 @@
   let comments: Array<{ text: string }> = []; // List of comments
   let errorMessage = ""; // Error message for invalid comment
 
-  const ENCRYPTION_KEY = 'your-encryption-key'; // Replace with a secure key (must match backend)
-
-  // Encrypt a message
-  const encrypt = async (text: string): Promise<string> => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(text);
-    const key = await crypto.subtle.importKey(
-      'raw',
-      new TextEncoder().encode(ENCRYPTION_KEY),
-      { name: 'AES-CBC' },
-      false,
-      ['encrypt']
-    );
-    const iv = crypto.getRandomValues(new Uint8Array(16)); // Generate random IV
-    const encrypted = await crypto.subtle.encrypt({ name: 'AES-CBC', iv }, key, data);
-    return `${btoa(String.fromCharCode(...iv))}:${btoa(String.fromCharCode(...new Uint8Array(encrypted)))}`;
-  };
-
-  // Decrypt a message
-  const decrypt = async (encryptedText: string): Promise<string> => {
-    const [ivBase64, dataBase64] = encryptedText.split(':');
-    const iv = Uint8Array.from(atob(ivBase64), c => c.charCodeAt(0));
-    const encryptedData = Uint8Array.from(atob(dataBase64), c => c.charCodeAt(0));
-    const key = await crypto.subtle.importKey(
-      'raw',
-      new TextEncoder().encode(ENCRYPTION_KEY),
-      { name: 'AES-CBC' },
-      false,
-      ['decrypt']
-    );
-    const decrypted = await crypto.subtle.decrypt({ name: 'AES-CBC', iv }, key, encryptedData);
-    return new TextDecoder().decode(decrypted);
-  };
-
   // Fetch existing comments for the movie
   const fetchComments = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/get.php?movie_title=${encodeURIComponent(movie.title)}`);
+      const response = await fetch(`http://localhost:8080/api/get.php?movie_title=${(movie.title)}`);
       const data = await response.json();
       if (Array.isArray(data)) {
-        // Decrypt each comment
-        comments = await Promise.all(data.map(async (item: any) => ({ text: await decrypt(item.comment) })));
+        comments = data.map((item: any) => ({ text: item.comment }));
       } else {
         throw new Error('Failed to fetch comments');
       }
@@ -75,18 +41,18 @@
     errorMessage = "";
 
     try {
-      const encryptedComment = await encrypt(comment);
       const response = await fetch('http://localhost:8080/api/post.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ movie_title: movie.title, comment: encryptedComment })
+        body: JSON.stringify({ movie_title: movie.title, comment })
       });
       const data = await response.json();
 
       if (data.success) {
-        comments = [...comments, { text: comment }]; // Add decrypted comment to the list
+        comments = [...comments, { text: comment }];
         comment = ""; // Clear the input field
-        fetchComments(); // Re-fetch comments after posting
+        // Re-fetch comments after posting
+        fetchComments();
       } else {
         errorMessage = data.error || "Something went wrong.";
       }
@@ -135,7 +101,6 @@
     </section>
   </div>
 </class>
-
 <!-- Styles -->
 <style>
   /* Modal Backdrop */
@@ -217,8 +182,19 @@
     margin-bottom: 10px;
     resize: vertical;
     min-height: 100px;
+    background-color: #fff; /* Ensure background is light */
     font-size: 14px;
   }
+
+  .comment-input {
+  color: black; /* Text color */
+  background-color: transparent; /* Optional: if you want transparent background */
+}
+
+.comment-input::placeholder {
+  color: white; /* Placeholder text color */
+}
+
 
   /* Comment Button */
   .comment-button {
@@ -240,9 +216,8 @@
 
   /* Individual Comment */
   .comment {
-    background-color: #f0f0f0;
-    color:
- black; /* Black text */
+    background-color: #f0f0f0; /* Light gray background */
+    color: black; /* Black text */
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 4px;
