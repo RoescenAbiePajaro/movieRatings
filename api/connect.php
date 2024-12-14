@@ -1,3 +1,4 @@
+<!-- connect.php -->
 <?php
 $servername = "localhost";
 $username = "root"; // Default XAMPP username
