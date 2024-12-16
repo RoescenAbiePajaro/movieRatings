@@ -10,7 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 include 'connect.php';
-include 'encrypt_decrypt.php'; // Include encryption functions
 
 $movie_title = isset($_GET['movie_title']) ? htmlspecialchars(trim($_GET['movie_title']), ENT_QUOTES, 'UTF-8') : '';
 
@@ -25,14 +24,6 @@ try {
     $stmt->bindParam(':movie_title', $movie_title, PDO::PARAM_STR);
     $stmt->execute();
     $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    $key = getenv('ENCRYPTION_KEY'); // Get the encryption key
-
-    // Decrypt comments
-    foreach ($comments as &$comment) {
-        $comment['comment'] = decryptData($comment['comment'], $key);
-    }
-    unset($comment);
 
     echo json_encode($comments);
 } catch (PDOException $e) {
