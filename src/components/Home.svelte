@@ -1,3 +1,4 @@
+<!-- // src\components\Home.svelte -->
 <script>
   import Modal from "./Modal.svelte";
 

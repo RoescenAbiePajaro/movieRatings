@@ -1,4 +1,4 @@
-<!-- Modal.svelte -->
+Modal.svelte
 <script lang="ts">
   import { onMount } from 'svelte';
   export let movie: { 

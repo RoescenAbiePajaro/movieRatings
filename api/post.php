@@ -1,5 +1,5 @@
+<!-- api\post.php -->
 <?php
-
 
 // CORS headers to allow requests from your frontend (ensure frontend matches this domain)
 header("Access-Control-Allow-Origin: http://localhost:5173");
