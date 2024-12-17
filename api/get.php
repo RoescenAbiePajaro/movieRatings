@@ -1,4 +1,3 @@
-
 <?php
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
@@ -11,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 include 'connect.php';
+include 'encryption.php';
 
 $movie_title = isset($_GET['movie_title']) ? htmlspecialchars(trim($_GET['movie_title']), ENT_QUOTES, 'UTF-8') : '';
 
@@ -25,6 +25,10 @@ try {
     $stmt->bindParam(':movie_title', $movie_title, PDO::PARAM_STR);
     $stmt->execute();
     $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($comments as &$comment) {
+        $comment['comment'] = decrypt($comment['comment']);
+    }
 
     echo json_encode($comments);
 } catch (PDOException $e) {
