@@ -1,6 +1,8 @@
 Modal.svelte
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { encrypt } from '../services/encryption';
+
   export let movie: { 
     title: string; 
     image: string;
@@ -37,19 +39,18 @@ Modal.svelte
       return;
     }
 
-    // Reset error message before posting the comment
     errorMessage = "";
-
+    
     try {
       const response = await fetch('http://localhost:8080/api/post.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ movie_title: movie.title, comment })
+        body: JSON.stringify({ movie_title: movie.title, comment: comment }) // Remove encryption for now
       });
       const data = await response.json();
 
       if (data.success) {
-        comments = [...comments, { text: comment }];
+        comments = [...comments, { text: comment }]; // Store the original comment for display
         comment = ""; // Clear the input field
         // Re-fetch comments after posting
         fetchComments();

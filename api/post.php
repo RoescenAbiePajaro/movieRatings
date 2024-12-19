@@ -38,11 +38,8 @@ if (!isset($data['movie_title']) || !isset($data['comment'])) {
 $movie_title = htmlspecialchars(trim($data['movie_title']), ENT_QUOTES, 'UTF-8');
 $comment = htmlspecialchars(trim($data['comment']), ENT_QUOTES, 'UTF-8');
 
-// Encrypt the comment
-$encrypted_comment = encrypt($comment);
-
 // Check if inputs are empty
-if (empty($movie_title) || empty($encrypted_comment)) {
+if (empty($movie_title) || empty($comment)) {
     echo json_encode(['error' => 'Movie title and comment cannot be empty']);
     exit();
 }
@@ -52,7 +49,7 @@ try {
     $query = "INSERT INTO movie_comments (movie_title, comment) VALUES (:movie_title, :comment)";
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':movie_title', $movie_title, PDO::PARAM_STR);
-    $stmt->bindParam(':comment', $encrypted_comment, PDO::PARAM_STR);
+    $stmt->bindParam(':comment', $comment, PDO::PARAM_STR);
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Comment submitted successfully!']);
