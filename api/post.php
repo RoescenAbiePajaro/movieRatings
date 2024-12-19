@@ -46,10 +46,11 @@ if (empty($movie_title) || empty($comment)) {
 
 // Attempt to insert the comment into the database
 try {
+    $encrypted_comment = encrypt($comment); // Encrypt the comment before storing
     $query = "INSERT INTO movie_comments (movie_title, comment) VALUES (:movie_title, :comment)";
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':movie_title', $movie_title, PDO::PARAM_STR);
-    $stmt->bindParam(':comment', $comment, PDO::PARAM_STR);
+    $stmt->bindParam(':comment', $encrypted_comment, PDO::PARAM_STR); // Use encrypted comment
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Comment submitted successfully!']);
